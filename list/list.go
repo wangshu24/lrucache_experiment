@@ -36,7 +36,7 @@ func (l *List[K , V]) Add(e *Entry[K, V])  bool {
  	return evicted
 }
 
-func (l *List[K, V]) Get(index int) ( *Entry[K,V] , error) {
+func (l *List[K, V]) GetInd(index int) ( *Entry[K,V] , error) {
 	if index > l.len || index > l.cap { 
 		return nil, errors.New("invalid index")
 	}
@@ -54,7 +54,7 @@ func (l *List[K, V]) Get(index int) ( *Entry[K,V] , error) {
 	return tmp, nil
 }
 
-func (l *List[K, V]) Remove(index int) error {
+func (l *List[K, V]) RemoveInd(index int) error {
 	if index > l.len || index > l.cap {
 		return errors.New("invalid index")
 	}
@@ -68,6 +68,19 @@ func (l *List[K, V]) Remove(index int) error {
 	back.next = next
 	return nil
 }
+
+func (l *List[K, V]) PeekInd(index int) (*Entry[K, V], error){ 
+	if index > l.cap || index > l.len {
+		return nil, errors.New("invalid index")
+	}
+
+	tmp := l.root
+	for i:=0; i < index; i++ {
+		tmp = tmp.next
+	}
+
+	return tmp, nil
+} 
 
 func (l *List[K, V]) Len() int {
 	return l.len
