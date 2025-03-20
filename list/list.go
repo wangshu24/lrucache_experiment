@@ -9,13 +9,14 @@ type Entry[K comparable, V any] struct {
 	next, back *Entry[K, V]
 	key K
 	value V
-	ttl    time.Time
+	bday     time.Time
+	ttl time.Duration
 }
 
 type List[K comparable, V any] struct {
 	tail, root *Entry[K, V]
 	len, cap      int
-	
+	dict map[K]V
 }
 
 type V interface {}
@@ -38,12 +39,18 @@ func (l *List[K , V]) Add(e *Entry[K, V])  bool {
 func (l *List[K, V]) Get(index int) ( *Entry[K,V] , error) {
 	if index > l.len || index > l.cap { 
 		return nil, errors.New("invalid index")
-	}	
-	
+	}
+
 	tmp := l.root
 	for i:=0; i < index;i++{
 		tmp = tmp.next
 	}
+	time := time.Now()
+	endtime := tmp.bday.Add(tmp.ttl)
+	if (time.After(endtime)) {
+		return nil, errors.New("stale cache")
+	}
+	tmp.bday = time
 	return tmp, nil
 }
 
