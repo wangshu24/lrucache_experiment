@@ -20,12 +20,19 @@ type List[K comparable, V any] struct {
 
 type V interface {}
 
+//Add add a new item to the list and return boolean for whether an old item was discarded or not
+//TODO: added condition to check for existing key value pair, if exist, move to top of list and remove old one 
 func (l *List[K , V]) Add(e *Entry[K, V])  bool {
 	
 	l.tail.next =  e
+	l.tail = e
 	l.len++
-	
- 	return l.len > l.cap
+	evicted := l.len > l.cap
+	if l.len > l.cap {
+		l.root = l.root.next
+		l.len--
+	}
+ 	return evicted
 }
 
 func (l *List[K, V]) Get(index int) ( *Entry[K,V] , error) {
