@@ -53,6 +53,28 @@ func (l *List[K, V]) Add(e Entry[K, V]) bool {
 	return evicted
 }
 
+func (l *List[K, V]) AddKeyValue(k K, v V) bool {
+	var evicted bool
+
+	newEntry := &Entry[K, V]{
+		Next:  nil,
+		Back:  &l.Tail,
+		Key:   k,
+		Value: v,
+		Bday:  time.Now(),
+		TTL:   time.Duration(5 * 10000000000),
+	}
+	l.Tail.Next = newEntry
+	l.Tail = *newEntry
+	l.len++
+
+	if l.len > l.cap {
+		l.Root = *l.Root.Next
+		l.len--
+	}
+	return evicted
+}
+
 func (l *List[K, V]) GetInd(index int) (*Entry[K, V], error) {
 	if index > l.len || index > l.cap {
 		return nil, errors.New("invalid index")

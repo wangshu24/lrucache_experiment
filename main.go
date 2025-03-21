@@ -19,6 +19,7 @@ func main() {
 		TTL:   time.Duration(5 * 10000000000),
 	}
 	newList.Add(*entry1)
+
 	fmt.Println(*newList)
 	fmt.Println(newList.Len())
 }
